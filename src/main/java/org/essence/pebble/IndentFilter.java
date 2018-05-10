@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.essence.commons.Helper.as;
+
 /**
  * New Line filter. This filter replaces the %n characters with system new line characters.
  *
@@ -33,26 +35,32 @@ import java.util.regex.Pattern;
 public class IndentFilter implements Filter {
 
     private static final String SIZE = "size";
+    private static final String MULTIPLY = "mul";
 
     @Override
     public Object apply(Object inputObject, Map<String, Object> args) {
         int indentSize = 0;
-        Object o = args.get(SIZE);
-        if (o instanceof Number) {
-            indentSize = ((Number) o).intValue();
+        Number n = as(Number.class, args.get(SIZE));
+        if (n != null) {
+            indentSize = n.intValue();
         }
-        return inputObject == null ? null : replace(inputObject.toString(), indentSize);
+        int mul = 4;
+        Number n2 = as(Number.class, args.get(MULTIPLY));
+        if (n2 != null) {
+            indentSize = n2.intValue();
+        }
+        return inputObject == null ? null : replace(inputObject.toString(), indentSize * mul);
     }
 
     @Override
     public List<String> getArgumentNames() {
-        return Arrays.asList(new String[]{SIZE});
+        return Arrays.asList(new String[]{SIZE, MULTIPLY});
     }
 
     public static String replace(String str, int indentSize) {
         StringBuilder indent = new StringBuilder();
         for (int i = 0; i < indentSize; i++) {
-            indent.append("    ");
+            indent.append(" ");
         }
 
         StringBuilder buff = new StringBuilder();
