@@ -12,8 +12,11 @@ Example:
 ```
 _IndentFilter (indent)_: this filter indents the text using space characters.
 It indents AFTER a new line character, so the first char sequence up to the first new line is NOT indented.
+It multiplies the number of indentations by 4 by default. The reason is you can reuse the previous
+indentation.
 ```twig
-{{ "Text to indent" | indent(2) }}
+{# We reuse the four-space indentation and indent the text by 1 (* 4 spaces). #}
+    {{ "NOT indented%nIndented%nIndented" | nl | indent(1) }}
 ```
 _ReverseFilter (reverse)_: this filter reverses the list, array...
 
