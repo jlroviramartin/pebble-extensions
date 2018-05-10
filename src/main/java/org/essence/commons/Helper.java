@@ -25,12 +25,31 @@ package org.essence.commons;
 public class Helper {
 
     /**
-     * This method is similar to the C# as operator.
+     * This method is similar to the C# {@code as} operator.
+     *
+     * @param <T> Type to cast
+     * @param type Type to cast.
+     * @param o Object to cast.
+     * @return Value.
      */
     public static <T> T as(Class<T> type, Object o) {
         if (type.isInstance(o)) {
             return (T) o;
         }
         return null;
+    }
+
+    /**
+     * This method converts {@code o} to an int value.
+     *
+     * @param o Object to convert.
+     * @param defValue Default value.
+     * @return Value.
+     */
+    public static int asInt(Object o, int defValue) {
+        if (Number.class.isInstance(o)) {
+            return ((Number) o).intValue();
+        }
+        return defValue;
     }
 }

@@ -1,5 +1,5 @@
 # pebble-extensions
-Extensions made for Pebble project
+Extensions made for Pebble project.
 
 This project contains some extensions made for the project [Pebble](http://www.mitchellbosecke.com/pebble/home).
 
@@ -12,8 +12,8 @@ Example:
 ```
 _IndentFilter (indent)_: this filter indents the text using space characters.
 It indents AFTER a new line character, so the first char sequence up to the first new line is NOT indented.
-It multiplies the number of indentations by 4 by default. The reason is you can reuse the previous
-indentation.
+The reason is you can reuse the previous indentation. Also, it doesn't indent empty lines.
+It multiplies the number of indentations by 4 by default. 
 ```twig
 {# We reuse the four-space indentation and indent the text by 1 (* 4 spaces). #}
     {{ "NOT indented%nIndented%nIndented" | nl | indent(1) }}

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.essence.commons.Helper.as;
+import static org.essence.commons.Helper.asInt;
 
 /**
  * New Line filter. This filter replaces the %n characters with system new line characters.
@@ -38,18 +38,10 @@ public class IndentFilter implements Filter {
     private static final String MULTIPLY = "mul";
 
     @Override
-    public Object apply(Object inputObject, Map<String, Object> args) {
-        int indentSize = 0;
-        Number n = as(Number.class, args.get(SIZE));
-        if (n != null) {
-            indentSize = n.intValue();
-        }
-        int mul = 4;
-        Number n2 = as(Number.class, args.get(MULTIPLY));
-        if (n2 != null) {
-            indentSize = n2.intValue();
-        }
-        return inputObject == null ? null : replace(inputObject.toString(), indentSize * mul);
+    public String apply(Object inputObject, Map<String, Object> args) {
+        int indentSize = asInt(args.get(SIZE), 0);
+        int mul = asInt(args.get(MULTIPLY), 4);
+        return ((inputObject == null) ? null : replace(inputObject.toString(), indentSize * mul));
     }
 
     @Override
