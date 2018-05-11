@@ -6,7 +6,7 @@ This project contains some extensions made for the project [Pebble](http://www.m
 ## *Filters*
 
 _NlFilter (nl)_: this filter converts the "%n" char sequences into system newlines (\n, \r\n, ...).
-Example:
+
 ```twig
 {{ "Line 1%nLine 2%nLine 3%n" | nl }}
 ```
@@ -22,6 +22,7 @@ _IndentFilter (indent)_: this filter indents the text using space characters.
 It indents AFTER a new line character, so the first char sequence up to the first new line is NOT indented.
 The reason is you can reuse the previous indentation. Also, it doesn't indent empty lines.
 It multiplies the number of indentations by 4 by default. 
+
 ```twig
 {# We reuse the four-space indentation and indent the text by 1 (* 4 spaces). #}
     {{ "NOT indented%nIndented%nIndented" | nl | indent(1) }}
@@ -33,6 +34,7 @@ Output
     Indented
     Indented
 ```
+
 _ReverseFilter (reverse)_: this filter reverses the list, array...
 
 ---
@@ -40,7 +42,7 @@ _ReverseFilter (reverse)_: this filter reverses the list, array...
 ## *Nodes*
 
 _DynamicMacroNode (dynmacro)_: this node is similar to the macro node, but it allows you to use as a delegate/lambda function.
-Example:
+
 ```twig
 {# Macro 'Lambda' is defined to call it as a lambda macro. #}
 {% dynmacro Lambda( a, b, c ) %}
@@ -70,6 +72,7 @@ _ReflectionFunction (reflection)_: this function is used to call a method by ref
 _DynamicFunction (dynamic)_: this function is used to call a lambda macro (see dynmacro example).
 
 _ParentFunction (p)_: this function is used inside a dynamic macro definition and it allows you to reuse the parameters of the container macro.
+
 ```twig
 {% macro Macro1( a ) %}
     {%- dynmacro Macro2( b ) %}
@@ -88,6 +91,7 @@ Result: Outer text, Inner text
 ```
 
 _InvokeMacroFunction (invoke)_: this function is used to call a macro using its name.
+
 ```twig
 {% macro Test( a, b, c ) %}
 Result: {{ a }}, {{ b }}, {{ c }}
