@@ -40,9 +40,10 @@ public class DynamicExtension extends AbstractExtension {
     public Map<String, Function> getFunctions() {
         return new MapBuilder<String, Function>()
                 .put("reflection", new ReflectionFunction())
-                .put("getTemplate", new GetTemplateFunction())
+                .put("getMacro", new GetMacroFunction())
                 .put("dynamic", new DynamicFunction())
                 .put("p", new ParentFunction())
+                .put("invoke", new InvokeMacroFunction())
                 .build();
     }
 }

@@ -29,9 +29,6 @@ import org.junit.Test;
  */
 public class IndentFilterTest {
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //Assert.assertEquals("Prueba", 
     @Test
     public void hello() {
         Function<String, String> indent = s -> {
@@ -39,6 +36,8 @@ public class IndentFilterTest {
                     s,
                     new MapBuilder<String, Object>().put("size", 2).build());
         };
+
+        Assert.assertEquals("", indent.apply(""));
 
         Assert.assertEquals("Prueba", indent.apply("Prueba"));
 

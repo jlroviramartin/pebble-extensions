@@ -10,6 +10,14 @@ Example:
 ```twig
 {{ "Line 1%nLine 2%nLine 3%n" | nl }}
 ```
+
+Output
+```
+Line 1
+Line 2
+Line 3
+```
+
 _IndentFilter (indent)_: this filter indents the text using space characters.
 It indents AFTER a new line character, so the first char sequence up to the first new line is NOT indented.
 The reason is you can reuse the previous indentation. Also, it doesn't indent empty lines.
@@ -29,15 +37,21 @@ Example:
 ```twig
 {# Macro 'Lambda' is defined to call it as a lambda macro. #}
 {% dynmacro Lambda( a, b, c ) %}
-    {{ a }} {{ b }} {{ c }}
-{% enddynmacro %}
+<{{ a }} {{ b }} {{ c }}>
+{%- enddynmacro %}
 
 {{ MyMethod( Lambda ) }}
 
 {% macro MyMethod( macroToCall ) %}
-    {# 'dynamic' is used to dynamically call macro 'macroToCall'. #}
-    {{ dynamic( macroToCall, [ 1, "String", 1.5 ] ) }} {# -> macroToCall( 1, "String", 1.5 ) #}
-{% macro %}
+{# 'dynamic' is used to dynamically call macro 'macroToCall'. #}
+{# -> macroToCall( 1, "String", 1.5 ) #}
+Result: {{ dynamic( macroToCall, [ 1, "String", 1.5 ] ) }}
+{%- endmacro %}
+```
+
+Output
+```
+Result: <1 String 1.5>
 ```
 
 ---
@@ -45,12 +59,37 @@ Example:
 ## *Functions*
 
 _ReflectionFunction (reflection)_: this function is used to call a method by reflection.
+
 _DynamicFunction (dynamic)_: this function is used to call a lambda macro (see dynmacro example).
-_ParentFunction (p)_: this function is used inside a macro/dynamic macro definition and it allows you to reuse the parameters of the container macro.
+
+_ParentFunction (p)_: this function is used inside a dynamic macro definition and it allows you to reuse the parameters of the container macro.
 ```twig
 {% macro Macro1( a ) %}
-    {% macro Macro2( b ) %}
-        {{ p().a }} {{ b }} {# We are using the Macro1 parameters. #}
-    {% endmacro %}
+    {%- dynmacro Macro2( b ) %}
+{# We are using the Macro1 parameters. #}
+Result: {{ p().a }}, {{ b }}
+    {%- enddynmacro %}
+{{ Macro2("Texto interno") }}
 {% endmacro %}
+
+{{ Macro1("Texto externo") }}
+```
+
+Output
+```
+Result: Outer text, Inner text
+```
+
+_InvokeMacroFunction (invoke)_: this function is used to call a macro using its name.
+```twig
+{% macro Test( a, b, c ) %}
+Result: {{ a }}, {{ b }}, {{ c }}
+{%- endmacro %}
+{% set mname = \"Test\" %}
+{{ invoke( mname, [ \"Arg 1\", \"Arg 2\", \"Arg 3\" ] ) }}
+```
+
+Output
+```
+Result: Arg 1, Arg 2, Arg 3
 ```

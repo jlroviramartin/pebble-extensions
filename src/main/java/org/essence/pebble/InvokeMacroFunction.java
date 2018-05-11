@@ -18,13 +18,19 @@
  */
 package org.essence.pebble;
 
+import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.Function;
 import com.mitchellbosecke.pebble.extension.escaper.SafeString;
+import com.mitchellbosecke.pebble.node.ArgumentsNode;
+import com.mitchellbosecke.pebble.node.PositionalArgumentNode;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.essence.commons.Helper.as;
 
@@ -32,31 +38,40 @@ import static org.essence.commons.Helper.as;
  *
  * @author joseluis
  */
-public class GetTemplateFunction implements Function {
+public class InvokeMacroFunction implements Function {
 
     public static final String SELF = "_self";
     public static final String CONTEXT = "_context";
     public static final String NAME = "name";
+    public static final String ARGS = "args";
 
     @Override
     public Object execute(Map<String, Object> map) {
         String name = as(String.class, map.get(NAME));
+        List<?> args = as(List.class, map.get(ARGS));
         PebbleTemplateImpl self = as(PebbleTemplateImpl.class, map.get(SELF));
         EvaluationContext context = as(EvaluationContext.class, map.get(CONTEXT));
 
-        if (name == null || self == null || !self.hasMacro(name)) {
+        if (name == null || args == null || !self.hasMacro(name)) {
             return null;
         }
 
-        MacroAction macro = args -> {
-            SafeString safe = self.macro(context, name, args, false, -1);
-            return safe.toString();
-        };
-        return macro;
+        List<PositionalArgumentNode> positionalArgs = args.stream()
+                .map(x -> new PositionalArgumentNode(new LiteralObjectExpression<>(x, -1)))
+                .collect(Collectors.toList());
+
+        String result = "";
+        try {
+            SafeString safe = self.macro(context, name, new ArgumentsNode(positionalArgs, null, -1), false, -1);
+            result = safe.toString();
+        } catch (PebbleException ex) {
+            Logger.getLogger(InvokeMacroFunction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 
     @Override
     public List<String> getArgumentNames() {
-        return Arrays.asList(new String[]{NAME});
+        return Arrays.asList(new String[]{NAME, ARGS});
     }
 }

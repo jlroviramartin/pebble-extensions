@@ -18,16 +18,13 @@
  */
 package org.essence.pebble;
 
-import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.Function;
-import com.mitchellbosecke.pebble.node.ArgumentsNode;
-import com.mitchellbosecke.pebble.node.PositionalArgumentNode;
+import com.mitchellbosecke.pebble.extension.escaper.SafeString;
+import com.mitchellbosecke.pebble.template.EvaluationContext;
+import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static org.essence.commons.Helper.as;
 
@@ -35,35 +32,31 @@ import static org.essence.commons.Helper.as;
  *
  * @author joseluis
  */
-public class DynamicFunction implements Function {
+public class GetMacroFunction implements Function {
 
-    public static final String MACRO = "macro";
-    public static final String ARGS = "args";
+    public static final String SELF = "_self";
+    public static final String CONTEXT = "_context";
+    public static final String NAME = "name";
 
     @Override
     public Object execute(Map<String, Object> map) {
-        MacroAction macro = as(MacroAction.class, map.get(MACRO));
-        List<?> args = as(List.class, map.get(ARGS));
+        String name = as(String.class, map.get(NAME));
+        PebbleTemplateImpl self = as(PebbleTemplateImpl.class, map.get(SELF));
+        EvaluationContext context = as(EvaluationContext.class, map.get(CONTEXT));
 
-        if (macro == null || args == null) {
+        if (name == null || self == null || !self.hasMacro(name)) {
             return null;
         }
 
-        List<PositionalArgumentNode> positionalArgs = args.stream()
-                .map(x -> new PositionalArgumentNode(new LiteralObjectExpression<>(x, -1)))
-                .collect(Collectors.toList());
-
-        String result = "";
-        try {
-            result = macro.exec(new ArgumentsNode(positionalArgs, null, -1));
-        } catch (PebbleException ex) {
-            Logger.getLogger(DynamicFunction.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return result;
+        MacroAction macro = args -> {
+            SafeString safe = self.macro(context, name, args, false, -1);
+            return safe.toString();
+        };
+        return macro;
     }
 
     @Override
     public List<String> getArgumentNames() {
-        return Arrays.asList(new String[]{MACRO, ARGS});
+        return Arrays.asList(new String[]{NAME});
     }
 }
