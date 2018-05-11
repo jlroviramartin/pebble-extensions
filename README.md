@@ -26,6 +26,13 @@ It multiplies the number of indentations by 4 by default.
 {# We reuse the four-space indentation and indent the text by 1 (* 4 spaces). #}
     {{ "NOT indented%nIndented%nIndented" | nl | indent(1) }}
 ```
+
+Output
+```
+    NOT indented
+    Indented
+    Indented
+```
 _ReverseFilter (reverse)_: this filter reverses the list, array...
 
 ---
@@ -37,7 +44,7 @@ Example:
 ```twig
 {# Macro 'Lambda' is defined to call it as a lambda macro. #}
 {% dynmacro Lambda( a, b, c ) %}
-<{{ a }} {{ b }} {{ c }}>
+{{ a }}, {{ b }}, {{ c }}
 {%- enddynmacro %}
 
 {{ MyMethod( Lambda ) }}
@@ -51,7 +58,7 @@ Result: {{ dynamic( macroToCall, [ 1, "String", 1.5 ] ) }}
 
 Output
 ```
-Result: <1 String 1.5>
+Result: 1, String, 1.5
 ```
 
 ---
