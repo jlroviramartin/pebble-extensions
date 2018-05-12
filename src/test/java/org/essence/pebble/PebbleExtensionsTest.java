@@ -28,7 +28,7 @@ import org.junit.Test;
  *
  * @author joseluis
  */
-public class PebbleExtensionsTest extends BaseTemplate {
+public class PebbleExtensionsTest extends TemplateEngine {
 
     public PebbleExtensionsTest() {
         super(PebbleExtensionsTest::buildEngine);
@@ -48,8 +48,8 @@ public class PebbleExtensionsTest extends BaseTemplate {
         StringBuilder buff = new StringBuilder();
         buff.append("{{ \"Line 1%nLine 2%nLine 3%n\" | nl }}");
 
-        Template t = loadPebbleResource(buff.toString());
-        String s = exec(t, new MapBuilder<String, Object>().build());
+        Template t = load(buff.toString());
+        String s = t.toString(new MapBuilder<String, Object>().build());
         String e = String.format("Line 1%n"
                                  + "Line 2%n"
                                  + "Line 3%n");
@@ -72,8 +72,8 @@ public class PebbleExtensionsTest extends BaseTemplate {
         buff.append("Result: {{ dynamic( macroToCall, [ 1, \"String\", 1.5 ] ) }}").append(System.lineSeparator());
         buff.append("{%- endmacro %}").append(System.lineSeparator());
 
-        Template t = loadPebbleResource(buff.toString());
-        String s = exec(t, new MapBuilder<String, Object>().build());
+        Template t = load(buff.toString());
+        String s = t.toString(new MapBuilder<String, Object>().build());
         String e = String.format("Result: <1 String 1.5>");
 
         Assert.assertEquals(e, s);
@@ -91,8 +91,8 @@ public class PebbleExtensionsTest extends BaseTemplate {
 
         buff.append("{{ Macro1(\"Outer text\") }}").append(System.lineSeparator());
 
-        Template t = loadPebbleResource(buff.toString());
-        String s = exec(t, new MapBuilder<String, Object>().build());
+        Template t = load(buff.toString());
+        String s = t.toString(new MapBuilder<String, Object>().build());
         String e = String.format("Result: Outer text, Inner text");
 
         Assert.assertEquals(e, s);
@@ -104,8 +104,8 @@ public class PebbleExtensionsTest extends BaseTemplate {
         buff.append("{# We reuse the four-space indentation and indent the text by 1 (* 4 spaces). #}").append(System.lineSeparator());
         buff.append("    {{ \"NOT indented%nIndented%nIndented\" | nl | indent(1) }}").append(System.lineSeparator());
 
-        Template t = loadPebbleResource(buff.toString());
-        String s = exec(t, new MapBuilder<String, Object>().build());
+        Template t = load(buff.toString());
+        String s = t.toString(new MapBuilder<String, Object>().build());
         String e = String.format("    NOT indented%n"
                                  + "    Indented%n"
                                  + "    Indented");
@@ -121,8 +121,8 @@ public class PebbleExtensionsTest extends BaseTemplate {
                      + "{% set mname = \"Test\" %}\n"
                      + "{{ invoke( mname, [ \"Arg 1\", \"Arg 2\", \"Arg 3\" ] ) }}";
 
-        Template t = loadPebbleResource(str);
-        String s = exec(t, new MapBuilder<String, Object>().build());
+        Template t = load(str);
+        String s = t.toString(new MapBuilder<String, Object>().build());
         String e = String.format("Result: Arg 1, Arg 2, Arg 3");
 
         Assert.assertEquals(e, s);
